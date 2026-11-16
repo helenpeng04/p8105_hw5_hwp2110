@@ -103,9 +103,36 @@ for (i in 1:5000){
   output[[i]] = sim_t_test(n_obs = 30, sigma = 5, mu = 0)
 }
 
-output |> 
-  bind_rows()
+output = output |> 
+  bind_rows() 
 
+head(output) # Showing only the first six observations to save space in the knitted document.
 ```
 
 
+```{r}
+mu_values = c(1, 2, 3, 4, 5, 6)
+
+results_df = 
+  expand_grid(
+    mu_values = 1:6,
+    iter = 1:5000
+  ) |> 
+  mutate(
+    results = map(mu_values, 
+                  \(mu) {sim_t_test(n_obs = 30, sigma = 5, mu = mu)})
+  ) |> 
+  unnest(results) |> 
+  group_by(mu_values) |> 
+  summarize(
+    prop_rejected = mean(rejected)
+  ) 
+
+results_df |> 
+  ggplot(aes(x = mu_values, y = prop_rejected)) +
+  geom_point() +
+  geom_line() + 
+  scale_x_continuous(breaks = 1:6)
+```
+
+There is a positive association between effect size and power. As the true population mean moves farther away from the null value of 0, power increases. In this simulation, power rises from about 20% when the true mean is 1 to nearly 100% when the true mean is 4, and reaches 100% for means of 5 and 6. This suggests that larger effect sizes are easier for the test to detect, making it more likely to reject the null hypothesis.
