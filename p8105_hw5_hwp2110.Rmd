@@ -54,6 +54,31 @@ From the plot, we obviously see that the probability of at least two people shar
 
 # Problem 2
 ```{r}
+data_files = list.files("data", full.names = TRUE)
 
+files_df = tibble(
+  files = data_files
+) |> 
+  mutate(
+    data = map(files, read_csv),
+    file_name = str_remove(files, "data/"),
+    arm = case_when(
+      str_detect(file_name, "^con") ~ "control",
+      str_detect(file_name, "^exp") ~ "experimental"
+    ),
+    subj = str_extract(file_name, "\\d+")
+  ) |> 
+  select(arm, subj, data) |> 
+  unnest(data) |> 
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week",
+    values_to = "observation",
+    names_prefix = "week_"
+  ) |> 
+  mutate(
+    week = as.numeric(week)
+  )
+  
 ```
 
