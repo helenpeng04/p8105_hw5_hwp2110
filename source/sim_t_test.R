@@ -16,7 +16,8 @@ sim_t_test = function(n_obs, sigma, mu){
   return_df = tibble(
     observation = x,
     estimate = test_result |> pull(estimate),
-    p_value = test_result |> pull(p.value)
+    p_value = test_result |> pull(p.value),
+    rejected = p_value < 0.05
   )
   
   return(return_df)

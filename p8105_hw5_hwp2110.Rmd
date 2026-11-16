@@ -96,7 +96,16 @@ The spaghetti plot shows the individual trajectories of participants in the cont
 # Problem 3
 ```{r}
 source("source/sim_t_test.R")
-sim_t_test(n_obs = 30, sigma = 5, mu = 0)
+
+output = vector("list", length = 5000)
+
+for (i in 1:5000){
+  output[[i]] = sim_t_test(n_obs = 30, sigma = 5, mu = 0)
+}
+
+output |> 
+  bind_rows()
 
 ```
+
 
