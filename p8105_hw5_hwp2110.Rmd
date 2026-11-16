@@ -56,7 +56,7 @@ From the plot, we obviously see that the probability of at least two people shar
 ```{r}
 data_files = list.files("data", full.names = TRUE)
 
-files_df = tibble(
+tidy_df = tibble(
   files = data_files
 ) |> 
   mutate(
@@ -77,8 +77,18 @@ files_df = tibble(
     names_prefix = "week_"
   ) |> 
   mutate(
-    week = as.numeric(week)
+    week = as.numeric(week),
+    subj = as.numeric(subj)
   )
   
 ```
 
+```{r}
+tidy_df |> 
+  ggplot(aes(x = week, y = observation, group = subj, color = arm)) +
+  geom_point() + 
+  geom_line() + 
+  facet_grid(~arm)
+```
+
+The spaghetti plot shows the individual trajectories of participants in the control and experimental arms over the 8-week study period. The control group appears to remain relatively stable over time, with observations fluctuating around lower values. In contrast, the experimental group shows a clear increasing trend in observations over time.
